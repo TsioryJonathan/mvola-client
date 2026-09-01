@@ -17,6 +17,9 @@ describe("Transaction", () => {
 
   beforeEach(() => {
     vi.stubGlobal("fetch", mockFetch);
+    vi.stubGlobal("crypto", {
+      randomUUID: () => "test-uuid-1234",
+    });
     auth = new Auth("https://pre-api.mvola.mg", "test-key", "test-secret");
     transaction = new Transaction(
       "https://pre-api.mvola.mg",
