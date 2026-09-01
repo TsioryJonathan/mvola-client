@@ -15,8 +15,8 @@ export class MVolaClient {
     this.transaction = new Transaction(
       baseUrl,
       this.auth,
-      config.sandbox !== false ? "Deepoz" : "Deepoz",
-      "0343500003"
+      config.sandbox !== false ? "partner-name" : "partner-name",
+      "0343500003",
     );
   }
 }

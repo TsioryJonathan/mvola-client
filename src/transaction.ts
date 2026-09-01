@@ -12,12 +12,7 @@ export class Transaction {
   private partnerName: string;
   private merchantAccount: string;
 
-  constructor(
-    baseUrl: string,
-    auth: Auth,
-    partnerName: string,
-    merchantAccount: string
-  ) {
+  constructor(baseUrl: string, auth: Auth, partnerName: string, merchantAccount: string) {
     this.baseUrl = baseUrl;
     this.auth = auth;
     this.partnerName = partnerName;
@@ -50,7 +45,7 @@ export class Transaction {
       Version: "1.0",
       "X-CorrelationID": correlationId,
       UserLanguage: params.language ?? "FR",
-      "UserAccountIdentifier": `msisdn;${params.debitParty}`,
+      UserAccountIdentifier: `msisdn;${params.debitParty}`,
       PartnerName: params.partnerName ?? this.partnerName,
       "Content-Type": "application/json",
       "Cache-Control": "no-cache",
@@ -60,14 +55,11 @@ export class Transaction {
       headers["X-Callback-URL"] = params.callbackUrl;
     }
 
-    const response = await fetch(
-      `${this.baseUrl}/mvola/mm/transactions/type/merchantpay/1.0.0/`,
-      {
-        method: "POST",
-        headers,
-        body: JSON.stringify(body),
-      }
-    );
+    const response = await fetch(`${this.baseUrl}/mvola/mm/transactions/type/merchantpay/1.0.0/`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(body),
+    });
 
     if (!response.ok) {
       const error = await response.text();
@@ -88,11 +80,11 @@ export class Transaction {
           Authorization: `Bearer ${token}`,
           Version: "1.0",
           "X-CorrelationID": crypto.randomUUID(),
-          "UserAccountIdentifier": `msisdn;${this.merchantAccount}`,
+          UserAccountIdentifier: `msisdn;${this.merchantAccount}`,
           PartnerName: this.partnerName,
           "Cache-Control": "no-cache",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -114,11 +106,11 @@ export class Transaction {
           Authorization: `Bearer ${token}`,
           Version: "1.0",
           "X-CorrelationID": crypto.randomUUID(),
-          "UserAccountIdentifier": `msisdn;${this.merchantAccount}`,
+          UserAccountIdentifier: `msisdn;${this.merchantAccount}`,
           PartnerName: this.partnerName,
           "Cache-Control": "no-cache",
         },
-      }
+      },
     );
 
     if (!response.ok) {
