@@ -66,7 +66,7 @@ export class Transaction {
       throw new Error(`MVola initiate failed ${response.status}: ${error}`);
     }
 
-    return response.json();
+    return (await response.json()) as TransactionResponse;
   }
 
   async getStatus(serverCorrelationId: string): Promise<TransactionStatus> {
@@ -92,7 +92,7 @@ export class Transaction {
       throw new Error(`MVola status failed ${response.status}: ${error}`);
     }
 
-    return response.json();
+    return (await response.json()) as TransactionStatus;
   }
 
   async getDetails(transactionId: string): Promise<TransactionDetails> {
@@ -118,6 +118,6 @@ export class Transaction {
       throw new Error(`MVola details failed ${response.status}: ${error}`);
     }
 
-    return response.json();
+    return (await response.json()) as TransactionDetails;
   }
 }

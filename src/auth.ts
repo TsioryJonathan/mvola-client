@@ -32,7 +32,7 @@ export class Auth {
       throw new Error(`MVola auth failed ${response.status}: ${body}`);
     }
 
-    const data: TokenResponse = await response.json();
+    const data = (await response.json()) as TokenResponse;
 
     this.tokenCache = {
       token: data.access_token,
