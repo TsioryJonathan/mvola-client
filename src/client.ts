@@ -7,16 +7,10 @@ const PRODUCTION_URL = "https://api.mvola.mg";
 
 export class MVolaClient {
   readonly transaction: Transaction;
-  private auth: Auth;
 
   constructor(config: MvolaClientConfig) {
     const baseUrl = config.sandbox !== false ? SANDBOX_URL : PRODUCTION_URL;
-    this.auth = new Auth(baseUrl, config.consumerKey, config.consumerSecret);
-    this.transaction = new Transaction(
-      baseUrl,
-      this.auth,
-      config.sandbox !== false ? "partner-name" : "partner-name",
-      "0343500003",
-    );
+    const auth = new Auth(baseUrl, config.consumerKey, config.consumerSecret);
+    this.transaction = new Transaction(baseUrl, auth, "0343500003");
   }
 }

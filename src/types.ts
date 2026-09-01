@@ -27,7 +27,9 @@ export interface InitiateTransactionParams {
   description: string;
   debitParty: string;
   creditParty: string;
-  partnerName?: string;
+  partnerName: string;
+  fc?: string;
+  amountFc?: string;
   callbackUrl?: string;
   language?: "FR" | "MG";
 }
@@ -50,7 +52,7 @@ export type TransactionDetails = {
   currency: string;
   transactionReference: string;
   transactionStatus: string;
-  creationDate: string;
+  createDate: string;
   requestDate: string;
   debitParty: TransactionParty[];
   creditParty: TransactionParty[];

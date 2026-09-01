@@ -13,7 +13,6 @@ describe("Transaction", () => {
     transaction = new Transaction(
       "https://pre-api.mvola.mg",
       auth,
-      "TestPartner",
       "0343500003"
     );
 
@@ -45,6 +44,7 @@ describe("Transaction", () => {
       description: "Test payment",
       debitParty: "0343500003",
       creditParty: "0343500004",
+      partnerName: "TestPartner",
     });
 
     expect(result.status).toBe("pending");
@@ -74,7 +74,7 @@ describe("Transaction", () => {
         currency: "Ar",
         transactionReference: "123456",
         transactionStatus: "completed",
-        creationDate: "2024-01-01T00:00:00Z",
+        createDate: "2024-01-01T00:00:00Z",
         requestDate: "2024-01-01T00:00:00Z",
         debitParty: [{ key: "msisdn", value: "0343500003" }],
         creditParty: [{ key: "msisdn", value: "0343500004" }],

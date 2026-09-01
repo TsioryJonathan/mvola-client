@@ -9,13 +9,11 @@ import {
 export class Transaction {
   private auth: Auth;
   private baseUrl: string;
-  private partnerName: string;
   private merchantAccount: string;
 
-  constructor(baseUrl: string, auth: Auth, partnerName: string, merchantAccount: string) {
+  constructor(baseUrl: string, auth: Auth, merchantAccount: string) {
     this.baseUrl = baseUrl;
     this.auth = auth;
-    this.partnerName = partnerName;
     this.merchantAccount = merchantAccount;
   }
 
@@ -32,9 +30,9 @@ export class Transaction {
       debitParty: [{ key: "msisdn", value: params.debitParty }],
       creditParty: [{ key: "msisdn", value: params.creditParty }],
       metadata: [
-        { key: "partnerName", value: params.partnerName ?? this.partnerName },
-        { key: "fc", value: "USD" },
-        { key: "amountFc", value: "1" },
+        { key: "partnerName", value: params.partnerName },
+        { key: "fc", value: params.fc ?? "USD" },
+        { key: "amountFc", value: params.amountFc ?? "1" },
       ],
       requestingOrganisationTransactionReference: externalRef,
       originalTransactionReference: externalRef,
@@ -45,8 +43,8 @@ export class Transaction {
       Version: "1.0",
       "X-CorrelationID": correlationId,
       UserLanguage: params.language ?? "FR",
-      UserAccountIdentifier: `msisdn;${params.debitParty}`,
-      PartnerName: params.partnerName ?? this.partnerName,
+      "UserAccountIdentifier": `msisdn;${params.debitParty}`,
+      partnerName: params.partnerName,
       "Content-Type": "application/json",
       "Cache-Control": "no-cache",
     };
@@ -55,11 +53,14 @@ export class Transaction {
       headers["X-Callback-URL"] = params.callbackUrl;
     }
 
-    const response = await fetch(`${this.baseUrl}/mvola/mm/transactions/type/merchantpay/1.0.0/`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body),
-    });
+    const response = await fetch(
+      `${this.baseUrl}/mvola/mm/transactions/type/merchantpay/1.0.0/`,
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      }
+    );
 
     if (!response.ok) {
       const error = await response.text();
@@ -80,11 +81,11 @@ export class Transaction {
           Authorization: `Bearer ${token}`,
           Version: "1.0",
           "X-CorrelationID": crypto.randomUUID(),
-          UserAccountIdentifier: `msisdn;${this.merchantAccount}`,
-          PartnerName: this.partnerName,
+          "UserAccountIdentifier": `msisdn;${this.merchantAccount}`,
+          partnerName: "Deepoz",
           "Cache-Control": "no-cache",
         },
-      },
+      }
     );
 
     if (!response.ok) {
@@ -106,11 +107,11 @@ export class Transaction {
           Authorization: `Bearer ${token}`,
           Version: "1.0",
           "X-CorrelationID": crypto.randomUUID(),
-          UserAccountIdentifier: `msisdn;${this.merchantAccount}`,
-          PartnerName: this.partnerName,
+          "UserAccountIdentifier": `msisdn;${this.merchantAccount}`,
+          partnerName: "Deepoz",
           "Cache-Control": "no-cache",
         },
-      },
+      }
     );
 
     if (!response.ok) {
