@@ -17,6 +17,8 @@ const client = new MVolaClient({
   consumerKey: process.env.MVOLA_CONSUMER_KEY!,
   consumerSecret: process.env.MVOLA_CONSUMER_SECRET!,
   sandbox: true,
+  partnerName: "MyPartner",
+  merchantAccount: "0343500003",
 });
 ```
 
@@ -25,10 +27,10 @@ const client = new MVolaClient({
 ```typescript
 const tx = await client.transaction.initiate({
   amount: 10000,
-  description: "Deepoz Wallet Deposit",
+  description: "Test Wallet Deposit",
   debitParty: "0343500003",
   creditParty: "0343500004",
-  partnerName: "Deepoz",
+  partnerName: "MyPartner",
 });
 
 console.log(tx.serverCorrelationId);
@@ -57,6 +59,8 @@ console.log(details.amount);
 | `consumerKey` | `string` | Yes | — |
 | `consumerSecret` | `string` | Yes | — |
 | `sandbox` | `boolean` | No | `true` |
+| `partnerName` | `string` | Yes | — |
+| `merchantAccount` | `string` | Yes | — |
 
 ### `client.transaction.initiate(params)`
 

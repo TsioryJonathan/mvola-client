@@ -9,11 +9,13 @@ import {
 export class Transaction {
   private auth: Auth;
   private baseUrl: string;
+  private partnerName: string;
   private merchantAccount: string;
 
-  constructor(baseUrl: string, auth: Auth, merchantAccount: string) {
+  constructor(baseUrl: string, auth: Auth, partnerName: string, merchantAccount: string) {
     this.baseUrl = baseUrl;
     this.auth = auth;
+    this.partnerName = partnerName;
     this.merchantAccount = merchantAccount;
   }
 
@@ -82,7 +84,7 @@ export class Transaction {
           Version: "1.0",
           "X-CorrelationID": crypto.randomUUID(),
           "UserAccountIdentifier": `msisdn;${this.merchantAccount}`,
-          partnerName: "Deepoz",
+          partnerName: this.partnerName,
           "Cache-Control": "no-cache",
         },
       }
@@ -108,7 +110,7 @@ export class Transaction {
           Version: "1.0",
           "X-CorrelationID": crypto.randomUUID(),
           "UserAccountIdentifier": `msisdn;${this.merchantAccount}`,
-          partnerName: "Deepoz",
+          partnerName: this.partnerName,
           "Cache-Control": "no-cache",
         },
       }

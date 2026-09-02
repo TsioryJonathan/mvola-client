@@ -11,6 +11,6 @@ export class MVolaClient {
   constructor(config: MvolaClientConfig) {
     const baseUrl = config.sandbox !== false ? SANDBOX_URL : PRODUCTION_URL;
     const auth = new Auth(baseUrl, config.consumerKey, config.consumerSecret);
-    this.transaction = new Transaction(baseUrl, auth, "0343500003");
+    this.transaction = new Transaction(baseUrl, auth, config.partnerName, config.merchantAccount);
   }
 }

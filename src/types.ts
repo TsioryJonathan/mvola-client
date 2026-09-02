@@ -2,6 +2,8 @@ export interface MvolaClientConfig {
   consumerKey: string;
   consumerSecret: string;
   sandbox?: boolean;
+  partnerName: string;
+  merchantAccount: string;
 }
 
 export type TokenResponse = {
