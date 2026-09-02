@@ -33,7 +33,6 @@ export class Transaction {
         { key: "partnerName", value: params.partnerName },
         { key: "fc", value: params.fc ?? "USD" },
         { key: "amountFc", value: params.amountFc ?? "1" },
-        ...(params.metadata ?? []),
       ],
       requestingOrganisationTransactionReference: externalRef,
       originalTransactionReference: externalRef,
