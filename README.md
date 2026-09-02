@@ -67,9 +67,14 @@ console.log(details.amount);
 | `description` | `string` | Yes | — |
 | `debitParty` | `string` | Yes | — |
 | `creditParty` | `string` | Yes | — |
-| `partnerName` | `string` | No | — |
+| `partnerName` | `string` | Yes | — |
+| `fc` | `string` | No | `"USD"` |
+| `amountFc` | `string` | No | `"1"` |
 | `callbackUrl` | `string` | No | — |
 | `language` | `"FR" \| "MG"` | No | `"FR"` |
+| `metadata` | `TransactionMetadata[]` | No | `[]` |
+
+> **Note:** Custom metadata are sent to MVola for internal processing only — they are NOT returned in API responses. Use them for your own tracking reference.
 
 ### `client.transaction.getStatus(serverCorrelationId)`
 

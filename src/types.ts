@@ -32,6 +32,7 @@ export interface InitiateTransactionParams {
   amountFc?: string;
   callbackUrl?: string;
   language?: "FR" | "MG";
+  metadata?: TransactionMetadata[];
 }
 
 export type TransactionResponse = {
