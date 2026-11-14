@@ -55,6 +55,17 @@ describe("Auth", () => {
     expect(dump).not.toContain(Buffer.from("my-key:my-secret").toString("base64"));
   });
 
+  it("redacts the credentials MVola echoes back in its OAuth error", async () => {
+    fetchMock.mockImplementation(async () =>
+      json({ error_description: "A valid OAuth client could not be found for client_id: my-key (secret my-secret)", error: "invalid_client" }, 401),
+    );
+    const error = await new Auth(BASE, "my-key", "my-secret").getToken().catch((e) => e);
+    expect(error).toBeInstanceOf(MvolaError);
+    expect(error).toMatchObject({ status: 401, operation: "authentication" });
+    expect(error.message).toContain("[redacted]");
+    expect(`${error.message} ${error.stack}`).not.toMatch(/my-key|my-secret/);
+  });
+
   it("rejects a malformed token response", async () => {
     fetchMock.mockImplementation(async () => json({ nope: true }));
     await expect(new Auth(BASE, "k", "s").getToken()).rejects.toBeInstanceOf(MvolaError);
