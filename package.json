@@ -1,7 +1,7 @@
 {
   "name": "mvola-client",
-  "version": "0.1.0",
-  "description": "Modern MVola API client for Node.js — native fetch, zero runtime dependencies",
+  "version": "0.3.0",
+  "description": "MVola Merchant Pay client for Node.js — native fetch, zero runtime dependencies, safe by default",
   "keywords": [
     "madagascar",
     "merchant-pay",
@@ -17,7 +17,8 @@
     "url": "https://github.com/TsioryJonathan/mvola-client.git"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -25,15 +26,17 @@
     ".": {
       "types": "./dist/index.d.ts",
       "require": "./dist/index.js",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:package": "node scripts/smoke-test.cjs",
     "lint": "tsc --noEmit",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run lint && npm test && npm run build && npm run test:package"
   },
   "devDependencies": {
     "@types/node": "^26.4.0",
@@ -42,5 +45,6 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "sideEffects": false
 }
