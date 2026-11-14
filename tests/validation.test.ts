@@ -1,13 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { MvolaValidationError } from "../src/errors";
-import { assertAmount, assertCallbackUrl, assertReference, normalizeMsisdn, sanitizeDescription } from "../src/validation";
+import { assertAmount, assertMsisdn, assertReference, sanitizeDescription } from "../src/validation";
 
 describe("validation", () => {
-  it("normalises Madagascar numbers and rejects the rest", () => {
-    expect(normalizeMsisdn("034 35 000 03", "x")).toBe("0343500003");
-    expect(normalizeMsisdn("+261343500003", "x")).toBe("0343500003");
-    expect(normalizeMsisdn("261343500003", "x")).toBe("0343500003");
-    for (const bad of ["123", "034350000", "abc", "0343500003; DROP", ""]) expect(() => normalizeMsisdn(bad, "x")).toThrow(MvolaValidationError);
+  it("numbers are sent as given, only empty values are rejected", () => {
+    expect(assertMsisdn(" 0343500003 ", "x")).toBe("0343500003");
+    for (const bad of ["", "   ", undefined as unknown as string]) expect(() => assertMsisdn(bad, "x")).toThrow(MvolaValidationError);
   });
 
   it("amount must be a positive integer", () => {
@@ -25,15 +23,5 @@ describe("validation", () => {
   it("references are strict identifiers", () => {
     expect(() => assertReference("order-42_a.b,c")).not.toThrow();
     for (const bad of ["", "x".repeat(51), "a/b", "a&b", "a\nb", "é"]) expect(() => assertReference(bad)).toThrow(MvolaValidationError);
-  });
-
-  it("callback URL: https, no credentials, at most ONE query parameter", () => {
-    expect(() => assertCallbackUrl("https://api.example.com/webhook")).not.toThrow();
-    expect(() => assertCallbackUrl("https://api.example.com/webhook?ref=abc.def")).not.toThrow();
-    expect(() => assertCallbackUrl("http://localhost:3000/webhook?ref=abc")).not.toThrow();
-    expect(() => assertCallbackUrl("https://api.example.com/webhook?ref=abc&sig=def")).toThrow(/at most one query parameter/);
-    expect(() => assertCallbackUrl("http://api.example.com/webhook")).toThrow(/https/);
-    expect(() => assertCallbackUrl("https://user:pass@api.example.com/webhook")).toThrow(/credentials/);
-    expect(() => assertCallbackUrl("not a url")).toThrow(MvolaValidationError);
   });
 });

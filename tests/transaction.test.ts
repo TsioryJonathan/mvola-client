@@ -72,16 +72,13 @@ describe("Transaction", () => {
       expect(Object.values(sentRequest().headers)).not.toContain("");
     });
 
-    it("validates locally: nothing is sent for bad input", async () => {
+    it("validates the documented rules locally: nothing is sent for bad input", async () => {
       const bad: Array<Parameters<Transaction["initiate"]>[0]> = [
         { ...PARAMS, amount: 10.5 },
         { ...PARAMS, amount: 0 },
-        { ...PARAMS, debitParty: "123" },
-        { ...PARAMS, creditParty: PARAMS.debitParty },
+        { ...PARAMS, debitParty: "" },
         { ...PARAMS, reference: "bad/ref" },
         { ...PARAMS, description: "###" },
-        { ...PARAMS, callbackUrl: "https://api.example.com/hook?ref=a&sig=b" },
-        { ...PARAMS, callbackUrl: "http://api.example.com/hook" },
       ];
       for (const params of bad) await expect(transaction.initiate(params)).rejects.toBeInstanceOf(MvolaValidationError);
       expect(fetchMock).not.toHaveBeenCalled();
@@ -162,7 +159,7 @@ describe("Transaction", () => {
       expect((await transaction.getDetails("12345")).amount).toBe("1000");
       expect(sentRequest().url).toBe(`${BASE}/mvola/mm/transactions/type/merchantpay/1.0.0/12345`);
       await expect(transaction.getDetails("")).rejects.toBeInstanceOf(MvolaValidationError);
-      await expect(transaction.getStatus("x".repeat(101))).rejects.toBeInstanceOf(MvolaValidationError);
+      await expect(transaction.getStatus("")).rejects.toBeInstanceOf(MvolaValidationError);
     });
 
     it("errors carry the operation", async () => {
