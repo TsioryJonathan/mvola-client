@@ -1,6 +1,6 @@
 {
   "name": "mvola-client",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "MVola Merchant Pay client for Node.js — native fetch, zero runtime dependencies, safe by default",
   "keywords": [
     "madagascar",
