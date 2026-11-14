@@ -1,44 +1,66 @@
+import { MvolaError } from "./errors";
+import { request } from "./http";
 import { TokenResponse } from "./types";
 
+const EXPIRY_MARGIN_MS = 30_000;
+
+/**
+ * OAuth2 client-credentials token provider.
+ *
+ * MVola REVOKES the previously issued token whenever a new one is requested, so two concurrent
+ * token calls (or two processes sharing the same keys) invalidate each other. Hence:
+ *  - one in-flight /token request at a time, shared by all callers;
+ *  - `getToken(rejected)` lets a caller that got a 401 ask for a fresh token WITHOUT discarding a
+ *    token another caller has just obtained (which would revoke it again).
+ * The credentials live in private fields: they never appear in logs, errors or JSON dumps.
+ */
 export class Auth {
-  private tokenCache: { token: string; expiresAt: number } | null = null;
+  readonly #baseUrl: string;
+  readonly #basic: string;
+  readonly #timeoutMs: number;
+  #cache: { token: string; expiresAt: number } | null = null;
+  #inFlight: Promise<string> | null = null;
 
-  constructor(
-    private baseUrl: string,
-    private consumerKey: string,
-    private consumerSecret: string
-  ) {}
+  constructor(baseUrl: string, consumerKey: string, consumerSecret: string, timeoutMs = 20_000) {
+    this.#baseUrl = baseUrl;
+    this.#basic = Buffer.from(`${consumerKey}:${consumerSecret}`).toString("base64");
+    this.#timeoutMs = timeoutMs;
+  }
 
-  async getToken(): Promise<string> {
-    const now = Date.now();
+  async getToken(rejectedToken?: string): Promise<string> {
+    if (rejectedToken && this.#cache?.token === rejectedToken) this.#cache = null;
+    if (this.#cache && this.#cache.expiresAt > Date.now() + EXPIRY_MARGIN_MS) return this.#cache.token;
+    if (this.#inFlight) return this.#inFlight;
 
-    if (this.tokenCache && this.tokenCache.expiresAt > now + 30_000) {
-      return this.tokenCache.token;
+    const requestedAt = Date.now();
+    const pending = (async () => {
+      const data = (await request(
+        `${this.#baseUrl}/token`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${this.#basic}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Cache-Control": "no-cache",
+          },
+          body: "grant_type=client_credentials&scope=EXT_INT_MVOLA_SCOPE",
+        },
+        this.#timeoutMs,
+        "authentication",
+      )) as Partial<TokenResponse> | undefined;
+
+      if (!data || typeof data.access_token !== "string" || !data.access_token || typeof data.expires_in !== "number") {
+        throw new MvolaError("MVola authentication failed: malformed token response", { status: 200, operation: "authentication" });
+      }
+      this.#cache = { token: data.access_token, expiresAt: requestedAt + data.expires_in * 1000 };
+      return data.access_token;
+    })();
+
+    this.#inFlight = pending;
+    try {
+      return await pending;
+    } finally {
+      if (this.#inFlight === pending) this.#inFlight = null;
     }
-
-    const basic = btoa(`${this.consumerKey}:${this.consumerSecret}`);
-
-    const response = await fetch(`${this.baseUrl}/token`, {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${basic}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: "grant_type=client_credentials&scope=EXT_INT_MVOLA_SCOPE",
-    });
-
-    if (!response.ok) {
-      const body = await response.text();
-      throw new Error(`MVola auth failed ${response.status}: ${body}`);
-    }
-
-    const data = (await response.json()) as TokenResponse;
-
-    this.tokenCache = {
-      token: data.access_token,
-      expiresAt: now + data.expires_in * 1000,
-    };
-
-    return data.access_token;
   }
 }

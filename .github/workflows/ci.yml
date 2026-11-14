@@ -33,3 +33,6 @@ jobs:
 
       - name: Test
         run: npm test
+
+      - name: Load the built package (require and import)
+        run: npm run test:package
