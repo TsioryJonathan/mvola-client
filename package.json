@@ -14,11 +14,12 @@
   "author": "Tsiory Jonathan",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TsioryJonathan/mvola-client.git"
+    "url": "git+https://github.com/TsioryJonathan/mvola-client.git"
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -31,7 +32,7 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist && tsc",
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:package": "node scripts/smoke-test.cjs",
@@ -39,9 +40,9 @@
     "prepublishOnly": "npm run lint && npm test && npm run build && npm run test:package"
   },
   "devDependencies": {
-    "@types/node": "^26.4.0",
+    "@types/node": "^20.19.43",
     "typescript": "^5.4.0",
-    "vitest": "^1.6.0"
+    "vitest": "^4.1.12"
   },
   "engines": {
     "node": ">=18.0.0"

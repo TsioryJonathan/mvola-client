@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18, 20, 22]
+        node-version: [18, 20, 22, 24]
 
     steps:
       - uses: actions/checkout@v4
@@ -31,7 +31,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      # The package supports Node 18, but the test runner (vitest 4) needs Node >= 20.
       - name: Test
+        if: matrix.node-version != 18
         run: npm test
 
       - name: Load the built package (require and import)
