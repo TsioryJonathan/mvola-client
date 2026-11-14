@@ -38,8 +38,7 @@ Other options: `baseUrl` (https only), `timeoutMs` (default 20000), `currency`, 
 ## Good to know
 
 - **Metadata order matters.** The gateway reads it by position; the client sends `partnerName`, `fc`, `amountFc` first. Any other order fails with `400 Missing field` (4001).
-- **`callbackUrl` may have only one query parameter.** `?ref=a&sig=b` is rejected by MVola with the same error, so the client throws before sending. Pack everything in one parameter: `?ref=<id>.<signature>`.
-- **Sandbox:** only the test numbers `0343500003` and `0343500004` work, and it can fail intermittently (e.g. `500 Error in getting user language`).
+- **Sandbox:** only the test numbers `0343500003` and `0343500004` work.
 - **On `401`** the client fetches a fresh token and retries once.
 
 ## Errors

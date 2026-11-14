@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { Auth } from "./auth";
-import { MvolaError, MvolaNetworkError, MvolaOperation, MvolaUncertainOutcomeError, MvolaValidationError } from "./errors";
+import { MvolaError, MvolaNetworkError, MvolaOperation, MvolaUncertainOutcomeError } from "./errors";
 import { HttpInit, request } from "./http";
 import { InitiateResult, InitiateTransactionParams, NormalizedStatus, TransactionDetails, TransactionResponse, TransactionStatus } from "./types";
-import { assertAmount, assertCallbackUrl, assertId, assertReference, normalizeMsisdn, sanitizeDescription } from "./validation";
+import { assertAmount, assertId, assertMsisdn, assertReference, sanitizeDescription } from "./validation";
 
 const PATH = "/mvola/mm/transactions/type/merchantpay/1.0.0";
 
@@ -52,12 +52,10 @@ export class Transaction {
     assertAmount(params.amount);
     const currency = params.currency ?? "Ar";
     const description = sanitizeDescription(params.description);
-    const debitParty = normalizeMsisdn(params.debitParty, "debitParty");
-    const creditParty = normalizeMsisdn(params.creditParty, "creditParty");
-    if (debitParty === creditParty) throw new MvolaValidationError("debitParty and creditParty must be different numbers");
+    const debitParty = assertMsisdn(params.debitParty, "debitParty");
+    const creditParty = assertMsisdn(params.creditParty, "creditParty");
     const reference = params.reference ?? randomUUID();
     assertReference(reference);
-    if (params.callbackUrl !== undefined) assertCallbackUrl(params.callbackUrl);
     const partnerName = params.partnerName ?? this.#partnerName;
 
     const body = {

@@ -36,7 +36,7 @@ export interface InitiateTransactionParams {
   currency?: string;
   /** At most 50 characters; special characters other than "- . _ ," are replaced by spaces. */
   description: string;
-  /** Subscriber being debited. Must differ from `creditParty`. */
+  /** Subscriber being debited. */
   debitParty: string;
   /** Merchant being credited. */
   creditParty: string;
@@ -49,7 +49,7 @@ export interface InitiateTransactionParams {
   reference?: string;
   fc?: string;
   amountFc?: string;
-  /** https URL with AT MOST ONE query parameter (MVola rejects more, see README). */
+  /** URL MVola calls when the transaction is completed (X-Callback-URL header). */
   callbackUrl?: string;
   language?: "FR" | "MG";
 }
