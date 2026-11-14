@@ -114,7 +114,7 @@ describe("Transaction", () => {
       expect(isOutcomeUncertain(malformed)).toBe(true);
     });
 
-    it("on 401 (token revoked by another issuer) refreshes once and replays the request", async () => {
+    it("on 401 refreshes once and replays the request", async () => {
       fetchMock
         .mockResolvedValueOnce(tokenResponse("old"))
         .mockResolvedValueOnce(invalidJwt())

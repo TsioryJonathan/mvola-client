@@ -32,10 +32,9 @@ export class Transaction {
   }
 
   /**
-   * Authenticated call with a single retry on 401: MVola revokes the previous token whenever a
-   * new one is issued (another instance, the developer portal...), so a cached token can be
-   * rejected before its announced expiry. A 401 means nothing was processed, so replaying the
-   * request once with a fresh token is safe, even for the money-moving POST.
+   * Authenticated call with a single retry on 401: a cached token can be rejected before its
+   * announced expiry. A 401 means nothing was processed, so replaying the request once with a
+   * fresh token is safe, even for the money-moving POST.
    */
   async #authorized(url: string, init: HttpInit, operation: MvolaOperation): Promise<unknown> {
     const token = await this.#auth.getToken();

@@ -24,7 +24,7 @@ describe("Auth", () => {
     expect(init.body).toBe("grant_type=client_credentials&scope=EXT_INT_MVOLA_SCOPE");
   });
 
-  it("shares one /token request between concurrent callers (MVola revokes the previous token)", async () => {
+  it("shares one /token request between concurrent callers", async () => {
     fetchMock.mockImplementation(async () => tokenResponse("shared"));
     const auth = new Auth(BASE, "key", "secret");
     const tokens = await Promise.all([auth.getToken(), auth.getToken(), auth.getToken()]);

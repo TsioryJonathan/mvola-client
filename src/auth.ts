@@ -7,11 +7,11 @@ const EXPIRY_MARGIN_MS = 30_000;
 /**
  * OAuth2 client-credentials token provider.
  *
- * MVola REVOKES the previously issued token whenever a new one is requested, so two concurrent
- * token calls (or two processes sharing the same keys) invalidate each other. Hence:
- *  - one in-flight /token request at a time, shared by all callers;
+ * A cached token can be rejected before its announced expiry (revoked keys, a token issued
+ * elsewhere...). Hence, defensively:
+ *  - one in-flight /token request at a time, shared by all callers (no token storm);
  *  - `getToken(rejected)` lets a caller that got a 401 ask for a fresh token WITHOUT discarding a
- *    token another caller has just obtained (which would revoke it again).
+ *    token another caller has just obtained.
  * The credentials live in private fields: they never appear in logs, errors or JSON dumps.
  */
 export class Auth {
