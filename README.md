@@ -1,5 +1,7 @@
 # mvola-client
 
+[![npm](https://img.shields.io/npm/v/mvola-client)](https://www.npmjs.com/package/mvola-client) [![CI](https://github.com/TsioryJonathan/mvola-client/actions/workflows/ci.yml/badge.svg)](https://github.com/TsioryJonathan/mvola-client/actions/workflows/ci.yml)
+
 MVola **Merchant Pay** client for Node.js — native `fetch`, zero runtime dependencies. Works with `require` and `import` (Node >= 18).
 
 ```sh
